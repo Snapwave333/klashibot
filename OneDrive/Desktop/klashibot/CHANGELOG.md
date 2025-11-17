@@ -2,6 +2,75 @@
 
 All notable changes to the Kalshi Trading Bot project are documented in this file.
 
+## [v2.0.0] - 2025-11-17
+
+### CRITICAL BUG FIXES
+- **Security Fix**: Replaced dangerous `eval()` with safe `json.loads()` in `src/models.py`
+  - Previous code: `eval(row['features'])` - allowed arbitrary code execution
+  - Now: Safe JSON parsing with error handling
+- **Missing Import Fix**: Added missing `math` import in `src/execution.py:9`
+  - Was causing `NameError: name 'math' is not defined` at runtime
+- **Silent Exception Fix**: Fixed bare `except: pass` in `simple_trading_bot.py`
+  - Now properly logs balance sync failures instead of silently ignoring them
+
+### NEW FEATURES
+- **High-Frequency Micro Trade Bot** (`micro_trade_bot.py`)
+  - Strategy: Thousands of small trades instead of few big risky ones
+  - 1% max risk per trade (conservative bankroll management)
+  - 1.5% profit target per trade
+  - 3% stop loss on every position
+  - Auto-exit after 30 minutes max hold time
+  - Max 5 concurrent positions
+  - 10-second market scanning cycle
+  - Real-time balance sync with API
+  - Persistent stats tracking (JSON file)
+  - Environment variable for API key (no more hardcoded keys!)
+
+### IMPROVED RISK MANAGEMENT
+- **Bankroll Protection**
+  - Never uses more than 5% of bankroll on single trade
+  - Maintains $5 minimum reserve at all times
+  - Calculates safe position sizes based on current balance
+  - Tracks win/loss ratio and total P&L
+- **Smart Exit Strategy**
+  - Take profit at 1.5% gain
+  - Stop loss at 3% loss
+  - Time-based exit after 30 minutes
+  - Auto-close all positions on shutdown
+
+### EDGE DETECTION
+- Scans 100+ markets for opportunities
+- Calculates spread percentage for liquidity assessment
+- Edge scoring based on price mispricing
+- Prioritizes tight spreads (< 10%)
+- Filters for best opportunities before trading
+
+### Files Created
+- `micro_trade_bot.py` - New high-frequency trading bot (500+ lines)
+- `MICRO_TRADE_README.md` - Comprehensive usage guide
+
+### Files Modified
+- `src/execution.py` - Added missing math import
+- `src/models.py` - Fixed eval() security vulnerability
+- `simple_trading_bot.py` - Fixed silent exception handler
+
+### Breaking Changes
+- **API Key Management**: No longer accepts hardcoded API keys
+  - Must set `KALSHI_API_KEY` environment variable
+  - Improves security, prevents credential leaks
+
+### Performance Improvements
+- Faster market scanning (10-second cycles)
+- Efficient position tracking with dictionary lookups
+- Deque-based trade history (memory efficient)
+- JSON-based persistent stats (survives restarts)
+
+### Security Enhancements
+- Removed all hardcoded API key fallbacks
+- Environment variable requirement enforced
+- Safe JSON parsing prevents code injection
+- Private key path validation
+
 ## [v1.1.0] - 2025-10-26
 
 ### Added
