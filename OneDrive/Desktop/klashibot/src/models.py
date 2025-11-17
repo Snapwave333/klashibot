@@ -72,8 +72,13 @@ class ProbabilityPredictor:
             if isinstance(row['features'], dict):
                 feature_dict = row['features']
             else:
-                feature_dict = eval(row['features']) if isinstance(row['features'], str) else {}
-            
+                # Safe JSON parsing instead of dangerous eval()
+                import json
+                try:
+                    feature_dict = json.loads(row['features']) if isinstance(row['features'], str) else {}
+                except (json.JSONDecodeError, TypeError):
+                    feature_dict = {}
+
             feature_data.append(feature_dict)
             
             # Collect feature names

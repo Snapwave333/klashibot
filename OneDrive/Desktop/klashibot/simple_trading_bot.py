@@ -124,8 +124,8 @@ def main():
                 try:
                     balance_response = portfolio_api.get_balance()
                     balance = balance_response.balance / 100
-                except:
-                    pass
+                except Exception as sync_err:
+                    print(f"  Warning: Balance sync failed: {sync_err}")
                 
                 time.sleep(5)  # Trade every 5 seconds
                 

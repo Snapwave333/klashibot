@@ -6,6 +6,7 @@ including smart order routing and slippage minimization.
 """
 
 import asyncio
+import math
 from typing import Dict, List, Optional, Tuple
 from datetime import datetime, timedelta
 from dataclasses import dataclass
