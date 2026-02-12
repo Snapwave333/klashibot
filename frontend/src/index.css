@@ -1,0 +1,511 @@
+
+/* 
+  Kalshi Trading Theme System 
+  2026 AI-Native Design Language
+*/
+
+/* --- Design Tokens & Variables --- */
+:root {
+  /* --- Primitive Palette (Solar Canyon) --- */
+  --primitive-magma: #E65100;
+  --primitive-sienna: #8D4004;
+  --primitive-sunray: #FFB74D;
+  --primitive-linen: #FAF9F6;
+  --primitive-umber: #1C1917;
+  --primitive-umber-light: #292524;
+  --primitive-void: #0a0a0f;
+  
+  /* --- Semantic Tokens (Default: Dark Mode) --- */
+  
+  /* Backgrounds */
+  --bg-app: var(--primitive-umber);
+  --bg-surface: var(--primitive-umber-light);
+  --bg-card: rgba(41, 37, 36, 0.7);
+  --bg-card-hover: rgba(56, 50, 48, 0.8);
+  --bg-overlay: rgba(28, 25, 23, 0.9);
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a8a29e;
+  --text-muted: #57534e;
+  --text-accent: var(--primitive-sunray);
+  
+  /* Borders */
+  --border-base: rgba(255, 255, 255, 0.08);
+  --border-highlight: rgba(255, 255, 255, 0.15);
+  --border-accent: rgba(255, 183, 77, 0.3);
+  
+  /* Brand / Accents */
+  --accent-primary: var(--primitive-sunray);
+  --accent-secondary: var(--primitive-magma);
+  --accent-glow: rgba(255, 183, 77, 0.2);
+  --aura-gold: rgb(205, 148, 65);
+  
+  /* Status */
+  --status-success: #00ff88;
+  --status-warning: #FFB74D;
+  --status-error: #ef4444;
+  --status-info: #3b82f6;
+
+  /* Trading Specific */
+  --trading-paper: #FFB74D;
+  --trading-live: #E65100;
+
+  /* --- ISABP Spacing System (Exponential) --- */
+  --space-xs: 4px;   /* Micro-bond, Universal Relation */
+  --space-s: 8px;    /* Strong relationship */
+  --space-m: 16px;   /* Standard Semantic Gap */
+  --space-l: 32px;   /* Sectional division */
+  --space-xl: 64px;  /* Viewport context separation */
+
+  /* --- Optical Balance Primitives --- */
+  --optical-top-adj: -1px; /* Compensate for line-height headroom */
+}
+
+/* Optical Correction Utility */
+.optical-center {
+  padding-top: calc(var(--space-m) + var(--optical-top-adj));
+  padding-bottom: var(--space-m);
+}
+
+.font-logo {
+  font-family: 'ExcaliburNouveau', sans-serif;
+  letter-spacing: 0.15em;
+  font-weight: 400; /* Custom fonts often only have one weight */
+}
+
+/* --- Light Mode Overrides --- */
+.dark {
+  /* No changes needed, default is dark */
+}
+
+/* Light Theme Overrides (Solar Canyon Day - Refined) */
+[data-theme='light'] {
+  /* Reduced brightness background - Stone/Linen mix */
+  --bg-app: #f2f0eb; 
+  
+  /* Cards pop with white against the stone background */
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafaf9;
+  --bg-overlay: rgba(242, 240, 235, 0.9);
+  
+  /* Higher contrast borders */
+  --border-subtle: #d6d3d1;
+  --border-strong: #a8a29e;
+  
+  /* Text Contrast Improvements */
+  --neutral-0: #1c1917;      /* Primary Text is deep black-brown */
+  --neutral-100: #44403c;    /* Secondary Text is dark stone */
+  --neutral-200: #57534e;    /* Muted Text */
+  
+  /* Semantics */
+  --text-primary: #1c1917;
+  --text-secondary: #44403c;
+  --text-muted: #78716c;
+  
+  /* Accents - darker for visibility on light bg */
+  --primary-500: #d97706;    /* Darker Amber */
+  --primary-glow: rgba(217, 119, 6, 0.15);
+  
+  --border-focus: #d97706;
+  
+  /* Specific mapping updates */
+  --border-base: var(--border-subtle);
+  --border-highlight: var(--border-strong);
+  --border-accent: rgba(217, 119, 6, 0.3);
+  
+  --accent-primary: var(--primary-500);
+  --accent-secondary: #8D4004; /* Sienna */
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'ExcaliburNouveau';
+  src: url('./assets/fonts/excaliburnouveau.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Hatolie';
+  src: url('./assets/fonts/Hatolie.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: '0210';
+  src: url('./assets/fonts/0210.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    @apply bg-[#131313] text-white antialiased selection:bg-orange-500/30;
+    /* Removed overflow-x-hidden as strictly handled above */
+    background-color: #131313;
+    background-image:
+      /* Orange Tint Overlay */
+      linear-gradient(135deg, rgba(255, 102, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
+      /* Weave Patterns */
+      linear-gradient(27deg, #151515 5px, transparent 5px),
+      linear-gradient(207deg, #151515 5px, transparent 5px),
+      linear-gradient(27deg, #222 5px, transparent 5px),
+      linear-gradient(207deg, #222 5px, transparent 5px),
+      linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+      linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-position: 
+      0 0,
+      0 5px, 
+      10px 0px, 
+      0px 10px, 
+      10px 5px, 
+      0 0, 
+      0 0;
+    background-size: 
+      100% 100%,
+      20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+    background-attachment: fixed;
+    font-family: 'Outfit', sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Typography Defaults */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold text-[var(--neutral-50)] tracking-tight;
+  }
+  
+  h1 { font-size: var(--text-3xl); }
+  h2 { font-size: var(--text-2xl); }
+  h3 { font-size: var(--text-xl); }
+  h4 { font-size: var(--text-lg); }
+  p, span, div { font-size: var(--text-sm); }
+  
+  /* Touch Target Size (Accessibility) */
+  button, a {
+    @apply min-w-[44px] min-h-[44px] touch-manipulation;
+  }
+}
+
+@layer utilities {
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@layer components {
+  /* --- Component: Buttons (Retro 70s Style) --- */
+  .btn {
+    @apply inline-flex relative justify-center items-center disabled:opacity-50 px-4 py-2 rounded-md overflow-visible font-bold uppercase tracking-wider transition-all active:translate-y-0.5 duration-100;
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: 0.05em;
+  }
+  
+  .btn-primary {
+    /* Burnt Orange Plastic Look */
+    background: linear-gradient(180deg, #E65100 0%, #BF360C 100%);
+    box-shadow: 
+      0 4px 0 #5D4037, /* Deep brown shadow for 3D depth */
+      0 6px 6px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.3);
+    color: #FFF3E0;
+    text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+    border: 1px solid #3E2723;
+  }
+  
+  .btn-primary:active {
+    box-shadow: 
+      0 1px 0 #5D4037,
+      0 2px 2px rgba(0,0,0,0.4),
+      inset 0 2px 4px rgba(0,0,0,0.2);
+    transform: translateY(3px);
+  }
+  
+  .btn-secondary {
+    /* Harvest Gold / Beige Plastic */
+    background: linear-gradient(180deg, #D4C4A8 0%, #A89F91 100%);
+    box-shadow: 
+      0 4px 0 #5D4037,
+      0 6px 6px rgba(0,0,0,0.4),
+      inset 0 1px 0 rgba(255,255,255,0.4);
+    color: #3E2723;
+    border: 1px solid #3E2723;
+  }
+
+  .btn-secondary:active {
+    box-shadow: 0 1px 0 #5D4037;
+    transform: translateY(3px);
+  }
+  
+  .btn-danger {
+    background: linear-gradient(180deg, #D32F2F 0%, #B71C1C 100%);
+    box-shadow: 0 4px 0 #4A0000, 0 6px 6px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    color: white;
+    border: 1px solid #280000;
+  }
+  
+  .btn-danger:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #4A0000;
+  }
+  
+  .btn-ghost {
+    @apply bg-transparent hover:bg-white/5 text-[var(--neutral-400)] hover:text-[var(--neutral-50)];
+  }
+
+  /* --- Component: Retro Switches --- */
+  .switch-retro {
+    @apply inline-flex relative items-center cursor-pointer;
+  }
+  
+  .switch-retro input {
+    @apply sr-only;
+  }
+  
+  .switch-track {
+    @apply relative bg-[#3E2723] shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] rounded-full peer-focus:outline-none peer-focus:ring-[#E65100] peer-focus:ring-2 peer-focus:ring-offset-2 w-11 h-6;
+    border: 1px solid #5D4037;
+  }
+  
+  .switch-thumb {
+    @apply top-[2px] left-[2px] absolute bg-[#D4C4A8] shadow-[0_2px_4px_rgba(0,0,0,0.4)] border border-[#8D6E63] rounded-full w-5 h-5 transition-all duration-200;
+    background: radial-gradient(circle at 30% 30%, #FFF8E1, #D4C4A8);
+  }
+  
+  input:checked + .switch-track {
+    background: linear-gradient(180deg, #E65100 0%, #BF360C 100%);
+  }
+  
+  input:checked + .switch-track .switch-thumb {
+    transform: translateX(100%);
+    border-color: #E65100;
+  }
+
+  /* --- Component: Inputs --- */
+  .input-field {
+    @apply bg-[#1C1917] shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] px-3 py-2 border-[#5D4037] border-2 focus:border-[#E65100] rounded-md focus:ring-[#E65100] focus:ring-1 w-full text-[#D4C4A8] text-sm transition-colors placeholder-[#5D4037];
+    font-family: 'Courier Prime', monospace; /* Typewriter feel */
+  }
+
+  /* Custom Retro Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: #1C1917;
+    border-left: 1px solid #3E2723;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #2D2420;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #8D6E63;
+    border: 2px solid #3E2723;
+    border-radius: 2px;
+    box-shadow: 
+      inset 1px 1px 0 rgba(255,255,255,0.2),
+      inset -1px -1px 0 rgba(0,0,0,0.5);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #A1887F;
+  }
+  
+  /* --- Component: Retro Panel (Replaces Glass Card) --- */
+  .glass-card {
+    /* Retro "Control Panel" Look - Beveled Plastic/Metal */
+    @apply relative bg-[#2A2422] overflow-hidden transition-all duration-300;
+    border: 2px solid #5D4037;
+    box-shadow: 
+      inset 1px 1px 0 rgba(255,255,255,0.1),
+      inset -1px -1px 0 rgba(0,0,0,0.5),
+      0 4px 6px rgba(0,0,0,0.5);
+    border-radius: 4px; /* Less rounded, more industrial */
+  }
+  
+  .glass-card::before {
+    /* Screws in corners */
+    content: '+';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    color: #5D4037;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 10px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .glass-card::after {
+    content: '+';
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    color: #5D4037;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 10px;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .glass-card:hover {
+    border-color: #8D6E63;
+    box-shadow: 
+      inset 1px 1px 0 rgba(255,255,255,0.15),
+      inset -1px -1px 0 rgba(0,0,0,0.5),
+      0 8px 12px rgba(0,0,0,0.6);
+  }
+
+  /* --- Component: Retro Badges --- */
+  .badge-retro {
+    @apply inline-flex justify-center items-center px-1.5 py-0.5 rounded-sm font-bold text-[10px] uppercase tracking-wider;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: 
+      inset 0 1px 2px rgba(0,0,0,0.2),
+      0 1px 0 rgba(255,255,255,0.1);
+    text-shadow: 0 1px 0 rgba(0,0,0,0.5);
+  }
+  
+  .badge-success {
+    background: #2E7D32;
+    color: #A5D6A7;
+    border: 1px solid #1B5E20;
+  }
+  
+  .badge-danger {
+    background: #C62828;
+    color: #FFCDD2;
+    border: 1px solid #B71C1C;
+  }
+  
+  .badge-warning {
+    background: #F57F17;
+    color: #FFF9C4;
+    border: 1px solid #E65100;
+  }
+
+  /* Brian Persona Card */
+  .brian-card {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(0, 0, 0, 0) 100%);
+    @apply border-l-[var(--primary-500)] border-l-2;
+  }
+
+  /* Neon Text Glow */
+  .neon-text-glow {
+    text-shadow: 0 0 10px currentColor;
+  }
+
+  /* Carbon Fiber Background - Orange Tint */
+  .carbon-fiber-orange {
+    background-color: #131313;
+    background-image:
+      /* Orange Tint Overlay */
+      linear-gradient(135deg, rgba(255, 102, 0, 0.3) 0%, rgba(0, 0, 0, 0.3) 100%),
+      /* Weave Patterns */
+      linear-gradient(27deg, #151515 5px, transparent 5px),
+      linear-gradient(207deg, #151515 5px, transparent 5px),
+      linear-gradient(27deg, #222 5px, transparent 5px),
+      linear-gradient(207deg, #222 5px, transparent 5px),
+      linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+      linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-position: 
+      0 0,
+      0 5px, 
+      10px 0px, 
+      0px 10px, 
+      10px 5px, 
+      0 0, 
+      0 0;
+    background-size: 
+      100% 100%,
+      20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px, 20px 20px;
+  }
+}
+
+/* --- Utilities --- */
+.text-label {
+  @apply font-medium text-[var(--neutral-500)] text-xs uppercase tracking-wider;
+}
+
+.text-value {
+  @apply font-mono font-bold text-[var(--neutral-50)];
+}
+
+/* Animations */
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px var(--primary-glow); }
+  50% { box-shadow: 0 0 20px var(--primary-glow); }
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Rainbow Border Animation - GPU Accelerated */
+@keyframes rainbow-border {
+  0% { border-color: var(--primary-400); box-shadow: 0 0 15px rgba(34, 211, 238, 0.4); }
+  25% { border-color: var(--color-success); }
+  50% { border-color: var(--color-warning); }
+  75% { border-color: var(--color-danger); }
+  100% { border-color: var(--primary-400); }
+}
+
+.animate-rainbow-border {
+  animation: rainbow-border 3s linear infinite;
+  will-change: border-color, box-shadow;
+}
+
+/* --- Theme Transition Effects --- */
+.melt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+  z-index: 9999;
+  pointer-events: none;
+  animation: meltDown 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Drip Scalloped Edge */
+.melt-overlay::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: inherit;
+  mask-image: radial-gradient(circle at 15px top, black 15px, transparent 16px);
+  mask-size: 30px 40px;
+  mask-repeat: repeat-x;
+  -webkit-mask-image: radial-gradient(circle at 15px top, black 15px, transparent 16px);
+  -webkit-mask-size: 30px 40px;
+  -webkit-mask-repeat: repeat-x;
+}
+
+@keyframes meltDown {
+  0% { height: 0; }
+  100% { height: 120vh; }
+}

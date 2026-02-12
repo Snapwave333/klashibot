@@ -1,0 +1,101 @@
+services:
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis:/data
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 256M
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    ports:
+      - "8766:8766"  # WebSocket Port
+      - "8767:8767"  # HTTP Audio Port
+      - "8001:8001"  # REST API Port
+    init: true
+    environment:
+      - WEBSOCKET_HOST=0.0.0.0
+      - OLLAMA_HOST=http://host.docker.internal:11434
+      - KALSHI_API_KEY=${KALSHI_API_KEY}
+      - KALSHI_PRIVATE_KEY_PATH=/app/config/kalshi_private.pem
+      - PAPER_TRADING=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    volumes:
+      - ./data:/app/data  # Persist data
+      - ./logs:/app/logs  # Persist logs
+      - ./websocket_bridge.py:/app/websocket_bridge.py
+      - ./tts_service.py:/app/tts_service.py
+      - ./api_server.py:/app/api_server.py
+      - ./trading_engine.py:/app/trading_engine.py
+      - ./mcp-server-kalshi:/app/mcp-server-kalshi
+      - ./config:/app/config
+      - ./requirements.txt:/app/requirements.txt
+      - ./brain:/app/brain
+      - ./strategies:/app/strategies
+    depends_on:
+      redis:
+         condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 3072M
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "3003:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+  self-healing-worker:
+    build:
+      context: ./self_healing_worker
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8002"
+    environment:
+      - REDIS_HOST=redis
+      - BACKEND_URL=http://backend:8001
+      - CHECK_INTERVAL_SECONDS=15
+    depends_on:
+      redis:
+         condition: service_healthy
+      backend:
+         condition: service_started
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import urllib.request, sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8002/api/v1/health').getcode() == 200 else 1)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3

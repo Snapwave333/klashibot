@@ -1,0 +1,103 @@
+{
+  "name": "kalshi-bot-dashboard",
+  "version": "1.0.0",
+  "description": "Real-time dashboard for Kalshi High-Velocity Trading Bot",
+  "author": "Antigravity",
+  "homepage": ".",
+  "main": "public/electron.js",
+  "scripts": {
+    "start": "set PORT=3003 && react-scripts start",
+    "build": "react-scripts build",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps",
+    "test": "react-scripts test",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:headed": "playwright test --project=chromium --headed",
+    "test:e2e:debug": "playwright test --project=chromium --debug",
+    "test:e2e:report": "playwright show-report",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css}\"",
+    "type-check": "tsc --noEmit",
+    "validate": "npm run lint && npm run type-check",
+    "eject": "react-scripts eject"
+  },
+  "build": {
+    "appId": "com.kalashi.tradingbot",
+    "productName": "Kalashi",
+    "win": {
+      "target": "portable",
+      "icon": "public/icon.png"
+    },
+    "files": [
+      "build/**/*",
+      "public/electron.js",
+      "public/preload.js",
+      "public/icon.png",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "public"
+    }
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.1.0",
+    "ajv": "^8.17.1",
+    "autoprefixer": "^10.4.17",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "framer-motion": "^12.26.2",
+    "lucide-react": "^0.562.0",
+    "motion": "^12.26.2",
+    "postcss": "^8.4.33",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-is": "^19.2.4",
+    "react-router-dom": "^6.21.3",
+    "react-scripts": "^5.0.1",
+    "react-window": "^1.8.10",
+    "recharts": "^3.6.0",
+    "shimmer-from-structure": "^0.4.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss": "^3.4.1",
+    "zustand": "^5.0.10"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^25.0.9",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "concurrently": "^8.2.2",
+    "electron": "28.1.4",
+    "electron-builder": "^26.4.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "playwright": "^1.50.0",
+    "prettier": "^3.8.1",
+    "typescript": "^4.9.5",
+    "wait-on": "^7.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

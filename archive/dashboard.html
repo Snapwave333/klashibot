@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalshi Bot - Live Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 20px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 20px;
+        }
+
+        h1 {
+            color: #10b981;
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .status-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .positive { color: #10b981; }
+        .negative { color: #ef4444; }
+        .neutral { color: #e2e8f0; }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: #1e293b;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+        }
+
+        .metric-label {
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .terminal {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+        }
+
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #334155;
+        }
+
+        .terminal-title {
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .log-entry {
+            font-size: 13px;
+            margin-bottom: 5px;
+            padding: 3px 0;
+        }
+
+        .log-time {
+            color: #64748b;
+        }
+
+        .log-level {
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .log-INFO { color: #3b82f6; }
+        .log-WARN { color: #f59e0b; }
+        .log-EXEC { color: #10b981; }
+        .log-CRIT { color: #ef4444; }
+
+        .log-message {
+            color: #cbd5e1;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected { background: #10b981; }
+        .status-disconnected { background: #ef4444; animation: none; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .kill-switch {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .kill-switch:hover {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Kalshi Bot Dashboard</h1>
+        <div class="subtitle">High-Velocity Trading System - Paper Trading Mode</div>
+    </div>
+
+    <div class="connection-status">
+        <div class="status-dot" id="statusDot"></div>
+        <span id="connectionStatus">Connecting to backend...</span>
+        <button class="kill-switch" onclick="killSwitch()" style="margin-left: auto;">🛑 KILL SWITCH</button>
+    </div>
+
+    <div class="status-bar">
+        <div class="stat-card">
+            <div class="stat-label">Bankroll</div>
+            <div class="stat-value neutral" id="bankroll">$100.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">NAV</div>
+            <div class="stat-value neutral" id="nav">$100.00</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Daily P&L</div>
+            <div class="stat-value neutral" id="pnl">$0.00 (0.00%)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Uptime</div>
+            <div class="stat-value neutral" id="uptime">0h 0m</div>
+        </div>
+    </div>
+
+    <div class="metrics-row">
+        <div class="metric-card">
+            <div class="metric-label">API Latency</div>
+            <div class="metric-value" id="latency">N/A</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Error Rate</div>
+            <div class="metric-value" id="errorRate">0.00%</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Active Strategies</div>
+            <div class="metric-value" id="strategies">3</div>
+        </div>
+    </div>
+
+    <div class="terminal">
+        <div class="terminal-header">
+            <span class="terminal-title">Live Log</span>
+            <button onclick="clearLogs()" style="background: none; border: none; color: #64748b; cursor: pointer;">Clear</button>
+        </div>
+        <div id="logContainer">
+            <div class="log-entry">
+                <span class="log-time">[Waiting for connection...]</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let ws = null;
+        let logs = [];
+        const maxLogs = 1000;
+
+        function connect() {
+            ws = new WebSocket('ws://localhost:8766');
+
+            ws.onopen = () => {
+                updateConnectionStatus(true);
+                addLog('INFO', 'Connected to backend');
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleMessage(data);
+            };
+
+            ws.onclose = () => {
+                updateConnectionStatus(false);
+                addLog('WARN', 'Disconnected from backend. Reconnecting in 5s...');
+                setTimeout(connect, 5000);
+            };
+
+            ws.onerror = (error) => {
+                addLog('CRIT', 'WebSocket error occurred');
+            };
+        }
+
+        function handleMessage(data) {
+            switch(data.type) {
+                case 'UPDATE_PORTFOLIO':
+                    updatePortfolio(data.payload);
+                    break;
+                case 'HEALTH':
+                    updateHealth(data.payload);
+                    break;
+                case 'LOG':
+                    addLog(data.payload.level, data.payload.message);
+                    break;
+                case 'EXECUTION':
+                    addLog('EXEC', `Executed: ${data.payload.ticker}`);
+                    break;
+                case 'NEW_SIGNAL':
+                    addLog('INFO', `Signal: ${data.payload.type}`);
+                    break;
+            }
+        }
+
+        function updatePortfolio(data) {
+            document.getElementById('bankroll').textContent = formatCurrency(data.balance);
+            document.getElementById('nav').textContent = formatCurrency(data.nav);
+
+            const pnl = data.daily_pnl || 0;
+            const pnlPct = data.daily_pnl_pct || 0;
+            const pnlEl = document.getElementById('pnl');
+            pnlEl.textContent = `${formatCurrency(pnl)} (${(pnlPct * 100).toFixed(2)}%)`;
+            pnlEl.className = 'stat-value ' + (pnl >= 0 ? 'positive' : 'negative');
+
+            document.getElementById('uptime').textContent = formatUptime(data.uptime_seconds || 0);
+        }
+
+        function updateHealth(data) {
+            if (data.api_latency_ms) {
+                document.getElementById('latency').textContent = `${data.api_latency_ms}ms`;
+            }
+            document.getElementById('errorRate').textContent = `${(data.error_rate_1m * 100).toFixed(2)}%`;
+            document.getElementById('strategies').textContent = data.active_strategies?.length || 0;
+        }
+
+        function addLog(level, message) {
+            const time = new Date().toLocaleTimeString();
+            logs.unshift({ time, level, message });
+            if (logs.length > maxLogs) logs.pop();
+            renderLogs();
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logContainer');
+            container.innerHTML = logs.map(log => `
+                <div class="log-entry">
+                    <span class="log-time">${log.time}</span>
+                    <span class="log-level log-${log.level}">[${log.level}]</span>
+                    <span class="log-message">${log.message}</span>
+                </div>
+            `).join('');
+        }
+
+        function clearLogs() {
+            logs = [];
+            renderLogs();
+        }
+
+        function updateConnectionStatus(connected) {
+            const dot = document.getElementById('statusDot');
+            const status = document.getElementById('connectionStatus');
+
+            if (connected) {
+                dot.className = 'status-dot status-connected';
+                status.textContent = 'Connected';
+            } else {
+                dot.className = 'status-dot status-disconnected';
+                status.textContent = 'Disconnected';
+            }
+        }
+
+        function killSwitch() {
+            if (confirm('Are you sure you want to trigger the KILL SWITCH? This will stop all trading.')) {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'KILL_SWITCH' }));
+                    addLog('CRIT', 'KILL SWITCH ACTIVATED');
+                }
+            }
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(value || 0);
+        }
+
+        function formatUptime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            return `${hours}h ${minutes}m`;
+        }
+
+        // Start connection on load
+        connect();
+    </script>
+</body>
+</html>

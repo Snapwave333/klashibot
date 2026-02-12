@@ -1,0 +1,30 @@
+{
+  "mcpServers": {
+    "kalshi": {
+      "command": "python",
+      "args": ["-m", "mcp_server_kalshi.server"],
+      "working_directory": "mcp-server-kalshi/src",
+      "env": {
+        "PYTHONPATH": "."
+      }
+    },
+    "system": {
+      "command": "python",
+      "args": ["server.py"],
+      "working_directory": "mcp-server-system",
+      "env": {}
+    },
+    "browser": {
+      "command": "python",
+      "args": ["server.py"],
+      "working_directory": "mcp-server-browser",
+      "env": {}
+    },
+    "orchestration": {
+      "command": "python",
+      "args": ["server.py"],
+      "working_directory": "mcp-server-orchestration",
+      "env": {}
+    }
+  }
+}

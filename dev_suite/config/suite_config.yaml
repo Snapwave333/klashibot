@@ -1,0 +1,31 @@
+
+suite:
+  name: "Kalshi Dev Suite"
+  version: "1.0.0"
+
+testing:
+  parallel: true
+  num_workers: 4
+  coverage_threshold: 90
+  test_paths:
+    - "dev_suite/tests"
+
+benchmarking:
+  warmup_rounds: 3
+  rounds: 10
+  thresholds:
+    max_time_ms: 500
+    max_memory_mb: 100
+
+debugging:
+  log_level: "DEBUG"
+  enable_breakpoints: true
+  log_file: "dev_suite/debug/debug.log"
+
+environments:
+  development:
+    db_path: ":memory:"
+    api_mock: true
+  production:
+    db_path: "data/kalshi.db"
+    api_mock: false

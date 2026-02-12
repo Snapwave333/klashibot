@@ -1,0 +1,56 @@
+# Kalshi High-Velocity Bot Configuration
+# Copy this file to settings.yaml and fill in your credentials
+
+kalshi:
+  api_key: "YOUR_KALSHI_API_KEY_HERE"
+  api_secret: "YOUR_KALSHI_API_SECRET_HERE"
+  base_url: "https://api.elections.kalshi.com/trade-api/v2"
+  websocket_url: "wss://api.elections.kalshi.com/trade-api/ws/v2"
+
+risk:
+  fractional_kelly: 0.25
+  max_concentration: 0.20
+  max_order_size: 500
+  max_correlated_exposure: 0.25
+  daily_loss_limit: 0.10
+  stale_data_threshold_sec: 5
+  drawdown_threshold: 0.05
+  recovery_kelly_multiplier: 0.10
+
+strategies:
+  nws_weather: true
+  fed_watch: true
+  pure_arb: true
+  correlation_arb: false
+  bayesian_flow: false
+  min_edge_threshold: 0.02
+  min_aroc_threshold: 0.50
+  min_liquidity_usd: 100
+
+data_sources:
+  nws_base_url: "https://api.weather.gov"
+  nws_user_agent: "KalshiBot/1.0 (your-email@example.com)"
+  nws_poll_interval_sec: 60
+  fedwatch_url: "https://www.cmegroup.com/markets/interest-rates/cme-fedwatch-tool.html"
+  fedwatch_poll_interval_sec: 300
+  bls_api_key: ""
+  bls_base_url: "https://api.bls.gov/publicAPI/v2"
+
+performance:
+  target_latency_ms: 27
+  max_acceptable_latency_ms: 100
+  websocket_ping_interval_sec: 30
+  rest_timeout_sec: 5
+  db_path: "data/kalshi.db"
+  db_wal_mode: true
+  log_level: "INFO"
+  log_to_file: true
+  log_path: "logs/bot.log"
+
+dashboard:
+  host: "localhost"
+  port: 8765
+  update_interval_ms: 100
+
+initial_bankroll: 10000
+sandbox_mode: true

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: self-healing-worker
+  labels:
+    app: self-healing-worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: self-healing-worker
+  template:
+    metadata:
+      labels:
+        app: self-healing-worker
+    spec:
+      containers:
+      - name: worker
+        image: kalashi/self-healing-worker:latest
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        env:
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: BACKEND_URL
+          value: "http://backend-service:8001"
+        ports:
+        - containerPort: 8002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: self-healing-worker-service
+spec:
+  selector:
+    app: self-healing-worker
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8002
